@@ -1,6 +1,5 @@
 echo "=== install deps ==="
 brew install emscripten
-brew install cmake
 
 src="libjxl-main"
 

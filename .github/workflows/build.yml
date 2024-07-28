@@ -26,8 +26,7 @@ jobs:
 
       - name: Compress
         run: |
-          brew install p7zip
-          7z a -t7z -p${{ secrets.ARTIFACTS_PWD }} -mhe=on -mx=9 cjxl.7z libjxl-main-macos/tools/cjxl
+          7z a -t7z -p'${{ secrets.ARTIFACTS_PWD }}' -mhe=on -mx=9 cjxl.7z libjxl-main-macos/tools/cjxl
 
       - uses: actions/upload-artifact@v4
         with:
