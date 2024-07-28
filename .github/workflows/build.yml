@@ -36,7 +36,7 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "${{ secrets.ARTIFACTS_PWD }}" build.keychain
 
           codesign --options runtime --force --timestamp --deep --sign "${{ secrets.WWDRTEAMID }}" $TARGET
-          ditto -c -k --sequesterRsrc --keepParent $TARGET notarized.zip
+          ditto -c -k --sequesterRsrc $TARGET notarized.zip
 
           xcrun notarytool store-credentials "OLG" --apple-id "${{ secrets.APPLE_ID }}" --team-id "${{ secrets.WWDRTEAMID }}" --password "${{ secrets.APPLEID_APP_PWD }}"
           xcrun notarytool submit notarized.zip --keychain-profile "OLG" --wait
