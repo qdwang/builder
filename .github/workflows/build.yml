@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: 'git@github.com:qdwang/jxlbridge.git'
+          repository: qdwang/jxlbridge
 
       - name: Check
         run: ls
