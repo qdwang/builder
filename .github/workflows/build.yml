@@ -26,7 +26,7 @@ jobs:
 
       - name: Sign zip
         env:
-          TARGET: libjxl-main-macos/tools/cjxl
+          TARGET: libjxl-main-macos/tools/cjpegli
         run: |
           echo "${{ secrets.MACOS_CERT }}" | base64 -d > certificate.p12  
           security create-keychain -p "${{ secrets.ARTIFACTS_PWD }}" build.keychain 
@@ -36,7 +36,7 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "${{ secrets.ARTIFACTS_PWD }}" build.keychain
 
           codesign --options runtime --force --timestamp --deep --sign "${{ secrets.WWDRTEAMID }}" $TARGET
-          ditto -c -k --sequesterRsrc $TARGET notarized.zip
+          ditto -c -k --sequesterRsrc --zlibCompressionLevel 9 $TARGET notarized.zip
 
           xcrun notarytool store-credentials "OLG" --apple-id "${{ secrets.APPLE_ID }}" --team-id "${{ secrets.WWDRTEAMID }}" --password "${{ secrets.APPLEID_APP_PWD }}"
           xcrun notarytool submit notarized.zip --keychain-profile "OLG" --wait
