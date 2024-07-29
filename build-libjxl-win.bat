@@ -10,9 +10,9 @@ echo === checkout libjxl ===
 git clone --depth 1 --recurse-submodules https://github.com/libjxl/libjxl.git %src%
 
 echo === build libjxl ===
-if exist %src%-windows rmdir /s /q %src%-windows
-mkdir %src%-windows
-cd %src%-windows
+if exist %src%-native rmdir /s /q %src%-native
+mkdir %src%-native
+cd %src%-native
 
 cmake ..\%src% ^
     -D CMAKE_SYSTEM_NAME=Windows ^

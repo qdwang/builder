@@ -14,22 +14,55 @@ jobs:
         run: .\build-libjxl-win.bat
       
       - name: Encrypt
-        run: 7z a -t7z -p'${{ secrets.ARTIFACTS_PWD }}' -mhe=on -mx=9 win.7z 
-              .\libjxl-main-windows\lib\Release\libjxl.lib
-              .\libjxl-main-windows\lib\Release\libjxl_threads.lib 
-              .\libjxl-main-windows\lib\Release\libjxl_cms.lib 
-              .\libjxl-main-windows\lib\Release\libjpegli-static.lib 
-              .\libjxl-main-windows\third_party\brotli\Release\libbrotlicommon.lib
-              .\libjxl-main-windows\third_party\brotli\Release\libbrotlidec.lib 
-              .\libjxl-main-windows\third_party\brotli\Release\libbrotlienc.lib 
-              .\libjxl-main-windows\third_party\highway\Release\libhwy.lib
+        run: 7z a -t7z -p'${{ secrets.ARTIFACTS_PWD }}' -mhe=on -mx=9 libjxl.7z 
+              .\libjxl-main-native\lib\Release\libjxl.lib
+              .\libjxl-main-native\lib\Release\libjxl_threads.lib 
+              .\libjxl-main-native\lib\Release\libjxl_cms.lib 
+              .\libjxl-main-native\lib\Release\libjpegli-static.lib 
+              .\libjxl-main-native\third_party\brotli\Release\libbrotlicommon.lib
+              .\libjxl-main-native\third_party\brotli\Release\libbrotlidec.lib 
+              .\libjxl-main-native\third_party\brotli\Release\libbrotlienc.lib 
+              .\libjxl-main-native\third_party\highway\Release\libhwy.lib
 
       - uses: actions/upload-artifact@v4
         with:
           retention-days: 1
-          path: win.7z
+          path: libjxl.7z
           name: win
   
+
+  build_on_linux:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: install emscripten
+        run: |
+          git clone https://github.com/emscripten-core/emsdk.git
+          cd emsdk
+          ./emsdk install latest
+          ./emsdk activate latest
+          source ./emsdk_env.sh
+
+      - name: build-libjxl
+        run: ./build-libjxl-linux.sh
+
+      - name: Encrypt
+        run: 7z a -t7z -p'${{ secrets.ARTIFACTS_PWD }}' -mhe=on -mx=9 libjxl.7z 
+              ./libjxl-main-native/lib/libjxl.a 
+              ./libjxl-main-native/lib/libjxl_threads.a
+              ./libjxl-main-native/lib/libjxl_cms.a 
+              ./libjxl-main-native/lib/libjpegli-static.a 
+              ./libjxl-main-native/third_party/brotli/libbrotlicommon.a 
+              ./libjxl-main-native/third_party/brotli/libbrotlidec.a 
+              ./libjxl-main-native/third_party/brotli/libbrotlienc.a 
+              ./libjxl-main-native/third_party/highway/libhwy.a
+
+      - uses: actions/upload-artifact@v4
+        with:
+          retention-days: 1
+          path: libjxl.7z
+          name: linux
+
   build_on_mac:
     runs-on: macos-14
     steps:
@@ -38,20 +71,20 @@ jobs:
         run: ./build-libjxl-mac.sh
         
       - name: Encrypt
-        run: 7z a -t7z -p'${{ secrets.ARTIFACTS_PWD }}' -mhe=on -mx=9 mac.7z 
-              ./libjxl-main-macos/lib/libjxl.a 
-              ./libjxl-main-macos/lib/libjxl_threads.a
-              ./libjxl-main-macos/lib/libjxl_cms.a 
-              ./libjxl-main-macos/lib/libjpegli-static.a 
-              ./libjxl-main-macos/third_party/brotli/libbrotlicommon.a 
-              ./libjxl-main-macos/third_party/brotli/libbrotlidec.a 
-              ./libjxl-main-macos/third_party/brotli/libbrotlienc.a 
-              ./libjxl-main-macos/third_party/highway/libhwy.a
+        run: 7z a -t7z -p'${{ secrets.ARTIFACTS_PWD }}' -mhe=on -mx=9 libjxl.7z 
+              ./libjxl-main-native/lib/libjxl.a 
+              ./libjxl-main-native/lib/libjxl_threads.a
+              ./libjxl-main-native/lib/libjxl_cms.a 
+              ./libjxl-main-native/lib/libjpegli-static.a 
+              ./libjxl-main-native/third_party/brotli/libbrotlicommon.a 
+              ./libjxl-main-native/third_party/brotli/libbrotlidec.a 
+              ./libjxl-main-native/third_party/brotli/libbrotlienc.a 
+              ./libjxl-main-native/third_party/highway/libhwy.a
 
       - uses: actions/upload-artifact@v4
         with:
           retention-days: 1
-          path: mac.7z
+          path: libjxl.7z
           name: mac
 
 

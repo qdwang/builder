@@ -1,6 +1,3 @@
-echo "=== install deps ==="
-brew install emscripten
-
 src="libjxl-main"
 
 echo "=== checkout libjxl ==="
@@ -11,9 +8,7 @@ rm -rf $src-native
 mkdir $src-native
 cd $src-native
 cmake ../$src \
-    -D CMAKE_SYSTEM_NAME=Darwin \
-    -D CMAKE_OSX_ARCHITECTURES="x86_64;arm64" \
-\
+    -D CMAKE_SYSTEM_NAME=Linux \
     -D CMAKE_BUILD_TYPE=Release \
     -D JPEGXL_STATIC=OFF \
     -D JPEGXL_ENABLE_TOOLS=ON \
