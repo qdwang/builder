@@ -12,24 +12,17 @@ jobs:
       - uses: actions/checkout@v4
       - name: build-libjxl
         run: .\build-libjxl-win.bat
-      
-      - name: Check
-        run: |
-          cd .\libjxl-main-native\lib\
-          dir
-          cd Release
-          dir
-          
+
       - name: Encrypt
         run: 7z a -t7z -p'${{ secrets.ARTIFACTS_PWD }}' -mhe=on -mx=9 libjxl.7z 
-              .\libjxl-main-native\lib\Release\libjxl.lib
-              .\libjxl-main-native\lib\Release\libjxl_threads.lib 
-              .\libjxl-main-native\lib\Release\libjxl_cms.lib 
-              .\libjxl-main-native\lib\Release\libjpegli-static.lib 
-              .\libjxl-main-native\third_party\brotli\Release\libbrotlicommon.lib
-              .\libjxl-main-native\third_party\brotli\Release\libbrotlidec.lib 
-              .\libjxl-main-native\third_party\brotli\Release\libbrotlienc.lib 
-              .\libjxl-main-native\third_party\highway\Release\libhwy.lib
+              .\libjxl-main-native\lib\Release\jxl.lib
+              .\libjxl-main-native\lib\Release\jxl_threads.lib 
+              .\libjxl-main-native\lib\Release\jxl_cms.lib 
+              .\libjxl-main-native\lib\Release\jpegli-static.lib 
+              .\libjxl-main-native\third_party\brotli\Release\brotlicommon.lib
+              .\libjxl-main-native\third_party\brotli\Release\brotlidec.lib 
+              .\libjxl-main-native\third_party\brotli\Release\brotlienc.lib 
+              .\libjxl-main-native\third_party\highway\Release\hwy.lib
 
       - uses: actions/upload-artifact@v4
         with:
