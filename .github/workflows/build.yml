@@ -17,7 +17,7 @@ jobs:
           path: jxlbridge
       
       - name: build-libjxl
-        run: build-libjxl-win.bat
+        run: .\build-libjxl-win.bat
       
       - name: Encrypt
         run: 7z a -t7z -p'${{ secrets.ARTIFACTS_PWD }}' -mhe=on -mx=9 output-win.7z libjxl-main-macos\tools\cjpegli
