@@ -13,6 +13,13 @@ jobs:
       - name: build-libjxl
         run: .\build-libjxl-win.bat
       
+      - name: Check
+        run: |
+          cd .\libjxl-main-native\lib\
+          dir
+          cd Release
+          dir
+          
       - name: Encrypt
         run: 7z a -t7z -p'${{ secrets.ARTIFACTS_PWD }}' -mhe=on -mx=9 libjxl.7z 
               .\libjxl-main-native\lib\Release\libjxl.lib
