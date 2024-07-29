@@ -1,6 +1,3 @@
-echo "=== install deps ==="
-brew install emscripten
-
 src="libjxl-main"
 
 echo "=== checkout libjxl ==="

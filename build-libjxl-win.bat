@@ -1,9 +1,6 @@
 @echo off
 setlocal
 
-echo === install deps ===
-choco install emscripten
-
 set "src=libjxl-main"
 
 echo === checkout libjxl ===
