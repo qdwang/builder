@@ -2,28 +2,27 @@ name: test
 
 on:
   push:
-    branches: [ "test" ]
+    branches: [ "libjxl" ]
   workflow_dispatch:
-
-env:
-  EXE: cjpegli
 
 jobs:
   build_on_win:
     runs-on: windows-2022
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/checkout@v4
-        with:
-          repository: qdwang/jxlbridge
-          token: ${{ secrets.MY_GITHUB_TOKEN }}
-          path: jxlbridge
-      
       - name: build-libjxl
         run: .\build-libjxl-win.bat
       
       - name: Encrypt
-        run: 7z a -t7z -p'${{ secrets.ARTIFACTS_PWD }}' -mhe=on -mx=9 win.7z .\libjxl-main-windows\tools\Release\cjpegli.exe
+        run: 7z a -t7z -p'${{ secrets.ARTIFACTS_PWD }}' -mhe=on -mx=9 win.7z \
+              .\libjxl-main-windows\lib\libjxl.lib \
+              .\libjxl-main-windows\lib\libjxl_threads.lib \
+              .\libjxl-main-windows\lib\libjxl_cms.lib \
+              .\libjxl-main-windows\lib\libjpegli-static.lib \
+              .\libjxl-main-windows\third_party\brotli\libbrotlicommon.lib \
+              .\libjxl-main-windows\third_party\brotli\libbrotlidec.lib \
+              .\libjxl-main-windows\third_party\brotli\libbrotlienc.lib \
+              .\libjxl-main-windows\third_party\highway\libhwy.lib
 
       - uses: actions/upload-artifact@v4
         with:
@@ -35,37 +34,19 @@ jobs:
     runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/checkout@v4
-        with:
-          repository: qdwang/jxlbridge
-          token: ${{ secrets.MY_GITHUB_TOKEN }}
-          path: jxlbridge
-
       - name: build-libjxl
         run: ./build-libjxl-mac.sh
-
-      - name: Check
-        run: ls
-
-      - name: Sign zip
-        env:
-          TARGET: libjxl-main-macos/tools/cjpegli
-        run: |
-          echo "${{ secrets.MACOS_CERT }}" | base64 -d > certificate.p12  
-          security create-keychain -p "${{ secrets.ARTIFACTS_PWD }}" build.keychain 
-          security default-keychain -s build.keychain
-          security unlock-keychain -p "${{ secrets.ARTIFACTS_PWD }}" build.keychain
-          security import certificate.p12 -k build.keychain -P "${{ secrets.MACOS_CERT_PWD }}" -T /usr/bin/codesign
-          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "${{ secrets.ARTIFACTS_PWD }}" build.keychain
-
-          codesign --options runtime --force --timestamp --deep --sign "${{ secrets.WWDRTEAMID }}" $TARGET
-          ditto -c -k --sequesterRsrc --zlibCompressionLevel 9 $TARGET ${{ env.EXE }}.zip
-
-          xcrun notarytool store-credentials "OLG" --apple-id "${{ secrets.APPLE_ID }}" --team-id "${{ secrets.WWDRTEAMID }}" --password "${{ secrets.APPLEID_APP_PWD }}"
-          xcrun notarytool submit ${{ env.EXE }}.zip --keychain-profile "OLG" --wait
-
+        
       - name: Encrypt
-        run: 7z a -t7z -p'${{ secrets.ARTIFACTS_PWD }}' -mhe=on -mx=9 mac.7z ${{ env.EXE }}.zip
+        run: 7z a -t7z -p'${{ secrets.ARTIFACTS_PWD }}' -mhe=on -mx=9 mac.7z \
+              ./libjxl-main-macos/lib/libjxl.a \
+              ./libjxl-main-macos/lib/libjxl_threads.a \
+              ./libjxl-main-macos/lib/libjxl_cms.a \
+              ./libjxl-main-macos/lib/libjpegli-static.a \
+              ./libjxl-main-macos/third_party/brotli/libbrotlicommon.a \
+              ./libjxl-main-macos/third_party/brotli/libbrotlidec.a \
+              ./libjxl-main-macos/third_party/brotli/libbrotlienc.a \
+              ./libjxl-main-macos/third_party/highway/libhwy.a
 
       - uses: actions/upload-artifact@v4
         with:
