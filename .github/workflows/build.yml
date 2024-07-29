@@ -29,6 +29,7 @@ jobs:
         with:
           retention-days: 1
           path: win.7z
+          name: win
   
   build_on_mac:
     runs-on: macos-14
@@ -70,5 +71,6 @@ jobs:
         with:
           retention-days: 1
           path: mac.7z
+          name: mac
 
 
