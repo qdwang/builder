@@ -23,7 +23,7 @@ jobs:
         run: .\build-libjxl-win.bat
       
       - name: Encrypt
-        run: 7z a -t7z -p'${{ secrets.ARTIFACTS_PWD }}' -mhe=on -mx=9 win.7z .\libjxl-main-windows\tools\cjpegli
+        run: 7z a -t7z -p'${{ secrets.ARTIFACTS_PWD }}' -mhe=on -mx=9 win.7z .\libjxl-main-windows\tools\Release\cjpegli.exe
 
       - uses: actions/upload-artifact@v4
         with:
