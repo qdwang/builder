@@ -20,12 +20,12 @@ jobs:
         run: .\build-libjxl-win.bat
       
       - name: Encrypt
-        run: 7z a -t7z -p'${{ secrets.ARTIFACTS_PWD }}' -mhe=on -mx=9 output-win.7z libjxl-main-macos\tools\cjpegli
+        run: 7z a -t7z -p'${{ secrets.ARTIFACTS_PWD }}' -mhe=on -mx=9 win.7z libjxl-main-windows\tools\cjpegli
 
       - uses: actions/upload-artifact@v4
         with:
           retention-days: 1
-          path: output-win.7z
+          path: win.7z
   
   build_on_mac:
     runs-on: macos-14
@@ -45,6 +45,7 @@ jobs:
 
       - name: Sign zip
         env:
+          NAME: cjpegli
           TARGET: libjxl-main-macos/tools/cjpegli
         run: |
           echo "${{ secrets.MACOS_CERT }}" | base64 -d > certificate.p12  
@@ -55,18 +56,17 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "${{ secrets.ARTIFACTS_PWD }}" build.keychain
 
           codesign --options runtime --force --timestamp --deep --sign "${{ secrets.WWDRTEAMID }}" $TARGET
-          ditto -c -k --sequesterRsrc --zlibCompressionLevel 9 $TARGET notarized.zip
+          ditto -c -k --sequesterRsrc --zlibCompressionLevel 9 $TARGET $NAME.zip
 
           xcrun notarytool store-credentials "OLG" --apple-id "${{ secrets.APPLE_ID }}" --team-id "${{ secrets.WWDRTEAMID }}" --password "${{ secrets.APPLEID_APP_PWD }}"
-          xcrun notarytool submit notarized.zip --keychain-profile "OLG" --wait
+          xcrun notarytool submit $NAME.zip --keychain-profile "OLG" --wait
 
       - name: Encrypt
-        run: |
-          7z a -t7z -p'${{ secrets.ARTIFACTS_PWD }}' -mhe=on -mx=9 notarized.7z notarized.zip
+        run: 7z a -t7z -p'${{ secrets.ARTIFACTS_PWD }}' -mhe=on -mx=9 mac.7z $NAME.zip
 
       - uses: actions/upload-artifact@v4
         with:
           retention-days: 1
-          path: notarized.7z
+          path: mac.7z
 
 
