@@ -14,15 +14,15 @@ jobs:
         run: .\build-libjxl-win.bat
       
       - name: Encrypt
-        run: 7z a -t7z -p'${{ secrets.ARTIFACTS_PWD }}' -mhe=on -mx=9 win.7z \
-              .\libjxl-main-windows\lib\libjxl.lib \
-              .\libjxl-main-windows\lib\libjxl_threads.lib \
-              .\libjxl-main-windows\lib\libjxl_cms.lib \
-              .\libjxl-main-windows\lib\libjpegli-static.lib \
-              .\libjxl-main-windows\third_party\brotli\libbrotlicommon.lib \
-              .\libjxl-main-windows\third_party\brotli\libbrotlidec.lib \
-              .\libjxl-main-windows\third_party\brotli\libbrotlienc.lib \
-              .\libjxl-main-windows\third_party\highway\libhwy.lib
+        run: 7z a -t7z -p'${{ secrets.ARTIFACTS_PWD }}' -mhe=on -mx=9 win.7z 
+              .\libjxl-main-windows\lib\Release\libjxl.lib
+              .\libjxl-main-windows\lib\Release\libjxl_threads.lib 
+              .\libjxl-main-windows\lib\Release\libjxl_cms.lib 
+              .\libjxl-main-windows\lib\Release\libjpegli-static.lib 
+              .\libjxl-main-windows\third_party\brotli\Release\libbrotlicommon.lib
+              .\libjxl-main-windows\third_party\brotli\Release\libbrotlidec.lib 
+              .\libjxl-main-windows\third_party\brotli\Release\libbrotlienc.lib 
+              .\libjxl-main-windows\third_party\highway\Release\libhwy.lib
 
       - uses: actions/upload-artifact@v4
         with:
@@ -38,14 +38,14 @@ jobs:
         run: ./build-libjxl-mac.sh
         
       - name: Encrypt
-        run: 7z a -t7z -p'${{ secrets.ARTIFACTS_PWD }}' -mhe=on -mx=9 mac.7z \
-              ./libjxl-main-macos/lib/libjxl.a \
-              ./libjxl-main-macos/lib/libjxl_threads.a \
-              ./libjxl-main-macos/lib/libjxl_cms.a \
-              ./libjxl-main-macos/lib/libjpegli-static.a \
-              ./libjxl-main-macos/third_party/brotli/libbrotlicommon.a \
-              ./libjxl-main-macos/third_party/brotli/libbrotlidec.a \
-              ./libjxl-main-macos/third_party/brotli/libbrotlienc.a \
+        run: 7z a -t7z -p'${{ secrets.ARTIFACTS_PWD }}' -mhe=on -mx=9 mac.7z 
+              ./libjxl-main-macos/lib/libjxl.a 
+              ./libjxl-main-macos/lib/libjxl_threads.a
+              ./libjxl-main-macos/lib/libjxl_cms.a 
+              ./libjxl-main-macos/lib/libjpegli-static.a 
+              ./libjxl-main-macos/third_party/brotli/libbrotlicommon.a 
+              ./libjxl-main-macos/third_party/brotli/libbrotlidec.a 
+              ./libjxl-main-macos/third_party/brotli/libbrotlienc.a 
               ./libjxl-main-macos/third_party/highway/libhwy.a
 
       - uses: actions/upload-artifact@v4
