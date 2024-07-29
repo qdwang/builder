@@ -12,7 +12,7 @@ mkdir $src-macos
 cd $src-macos
 cmake ../$src \
     -D CMAKE_SYSTEM_NAME=Darwin \
-    -D CMAKE_OSX_ARCHITECTURES=arm64 \
+    -D CMAKE_OSX_ARCHITECTURES="x86_64;arm64" \
 \
     -D CMAKE_BUILD_TYPE=Release \
     -D JPEGXL_STATIC=OFF \
