@@ -1,0 +1,91 @@
+name: tinydng-cli
+
+on:
+  push:
+    branches: [ "tinydng-cli" ]
+  workflow_dispatch:
+
+env:
+  EXE: tinydng-cli
+
+jobs:
+  build_on_linux:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: qdwang/dngmod
+          token: ${{ secrets.MY_GITHUB_TOKEN }}
+      
+      - name: build
+        run: cargo build -r --bin tinydng-cli
+      
+      - name: Encrypt
+        run: 7z a -t7z -p'${{ secrets.ARTIFACTS_PWD }}' -mhe=on -mx=9 linux.7z ./target/release/tinydng-cli
+
+      - uses: actions/upload-artifact@v4
+        with:
+          retention-days: 1
+          path: linux.7z
+          name: linux
+
+  build_on_win:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: qdwang/dngmod
+          token: ${{ secrets.MY_GITHUB_TOKEN }}
+      
+      - name: build
+        run: cargo build -r --bin tinydng-cli
+      
+      - name: Encrypt
+        run: 7z a -t7z -p'${{ secrets.ARTIFACTS_PWD }}' -mhe=on -mx=9 win.7z .\target\Release\tinydng-cli.exe
+
+      - uses: actions/upload-artifact@v4
+        with:
+          retention-days: 1
+          path: win.7z
+          name: win
+  
+  build_on_mac:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: qdwang/dngmod
+          token: ${{ secrets.MY_GITHUB_TOKEN }}
+      
+      - name: build
+        run: cargo build -r --bin tinydng-cli
+
+      - name: Check
+        run: ls
+
+      - name: Sign zip
+        env:
+          TARGET: target/release/tinydng-cli
+        run: |
+          echo "${{ secrets.MACOS_CERT }}" | base64 -d > certificate.p12  
+          security create-keychain -p "${{ secrets.ARTIFACTS_PWD }}" build.keychain 
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "${{ secrets.ARTIFACTS_PWD }}" build.keychain
+          security import certificate.p12 -k build.keychain -P "${{ secrets.MACOS_CERT_PWD }}" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "${{ secrets.ARTIFACTS_PWD }}" build.keychain
+
+          codesign --options runtime --force --timestamp --deep --sign "${{ secrets.WWDRTEAMID }}" $TARGET
+          ditto -c -k --sequesterRsrc --zlibCompressionLevel 9 $TARGET ${{ env.EXE }}.zip
+
+          xcrun notarytool store-credentials "OLG" --apple-id "${{ secrets.APPLE_ID }}" --team-id "${{ secrets.WWDRTEAMID }}" --password "${{ secrets.APPLEID_APP_PWD }}"
+          xcrun notarytool submit ${{ env.EXE }}.zip --keychain-profile "OLG" --wait
+
+      - name: Encrypt
+        run: 7z a -t7z -p'${{ secrets.ARTIFACTS_PWD }}' -mhe=on -mx=9 mac.7z ${{ env.EXE }}.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          retention-days: 1
+          path: mac.7z
+          name: mac
+
