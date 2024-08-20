@@ -7,6 +7,7 @@ on:
 
 env:
   EXE: tinydng-cli
+  VERSION: 0.1.0
 
 jobs:
   build_on_linux:
@@ -20,8 +21,10 @@ jobs:
       - name: build
         run: cargo build -r --bin tinydng-cli
       
-      - name: Encrypt
-        run: 7z a -t7z -p'${{ secrets.ARTIFACTS_PWD }}' -mhe=on -mx=9 linux.7z ./target/release/tinydng-cli
+      - name: Compress and encrypt
+        run: |
+          7z a -tzip -mx=9 -mmt=on ${{env.EXE}}-${{env.VERSION}}-linux-x64.zip ./target/release/tinydng-cli
+          7z a -t7z -p'${{ secrets.ARTIFACTS_PWD }}' -mhe=on -mx=9 linux.7z ${{env.EXE}}-${{env.VERSION}}-linux-x64.zip
 
       - uses: actions/upload-artifact@v4
         with:
@@ -40,8 +43,10 @@ jobs:
       - name: build
         run: cargo build -r --bin tinydng-cli
       
-      - name: Encrypt
-        run: 7z a -t7z -p'${{ secrets.ARTIFACTS_PWD }}' -mhe=on -mx=9 win.7z .\target\Release\tinydng-cli.exe
+      - name: Compress and encrypt
+        run: |
+          7z a -tzip -mx=9 -mmt=on ${{env.EXE}}-${{env.VERSION}}-win-x64.zip .\target\Release\tinydng-cli.exe
+          7z a -t7z -p'${{ secrets.ARTIFACTS_PWD }}' -mhe=on -mx=9 win.7z ${{env.EXE}}-${{env.VERSION}}-win-x64.zip
 
       - uses: actions/upload-artifact@v4
         with:
@@ -79,13 +84,13 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "${{ secrets.ARTIFACTS_PWD }}" build.keychain
 
           codesign --options runtime --force --timestamp --deep --sign "${{ secrets.WWDRTEAMID }}" $TARGET
-          ditto -c -k --sequesterRsrc --zlibCompressionLevel 9 $TARGET ${{ env.EXE }}.zip
+          ditto -c -k --sequesterRsrc --zlibCompressionLevel 9 $TARGET ${{env.EXE}}-${{env.VERSION}}-macos-universal.zip
 
           xcrun notarytool store-credentials "OLG" --apple-id "${{ secrets.APPLE_ID }}" --team-id "${{ secrets.WWDRTEAMID }}" --password "${{ secrets.APPLEID_APP_PWD }}"
-          xcrun notarytool submit ${{ env.EXE }}.zip --keychain-profile "OLG" --wait
+          xcrun notarytool submit ${{env.EXE}}-${{env.VERSION}}-macos-universal.zip --keychain-profile "OLG" --wait
 
       - name: Encrypt
-        run: 7z a -t7z -p'${{ secrets.ARTIFACTS_PWD }}' -mhe=on -mx=9 mac.7z ${{ env.EXE }}.zip
+        run: 7z a -t7z -p'${{ secrets.ARTIFACTS_PWD }}' -mhe=on -mx=9 mac.7z ${{env.EXE}}-${{env.VERSION}}-macos-universal.zip
 
       - uses: actions/upload-artifact@v4
         with:
