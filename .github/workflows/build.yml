@@ -62,14 +62,14 @@ jobs:
           rustup target add x86_64-apple-darwin
           cargo build -r --bin tinydng-cli
           cargo build -r --bin tinydng-cli --target x86_64-apple-darwin
-          lipo -create -output tinydng-cli target/release/tinydng-cli target/x86_64-apple-darwin/release/tinydng-cli
+          lipo -create -output target/tinydng-cli target/release/tinydng-cli target/x86_64-apple-darwin/release/tinydng-cli
 
       - name: Check
         run: ls
 
       - name: Sign zip
         env:
-          TARGET: tinydng-cli
+          TARGET: target/tinydng-cli
         run: |
           echo "${{ secrets.MACOS_CERT }}" | base64 -d > certificate.p12  
           security create-keychain -p "${{ secrets.ARTIFACTS_PWD }}" build.keychain 
