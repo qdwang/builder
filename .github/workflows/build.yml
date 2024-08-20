@@ -17,6 +17,9 @@ jobs:
           repository: qdwang/dngmod
           token: ${{ secrets.MY_GITHUB_TOKEN }}
       
+      - name: install deps
+        run: sudo apt-get install libbrotli-dev libhwy-dev
+
       - name: build
         run: cargo build -r --bin tinydng-cli
       
