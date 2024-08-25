@@ -1,7 +1,7 @@
 src="libjxl-main"
 
 echo "=== checkout libjxl ==="
-git clone --depth 1 --recurse-submodules https://github.com/libjxl/libjxl.git $src
+git clone --depth 1 --branch v0.10.3 --recurse-submodules https://github.com/libjxl/libjxl.git $src
 
 echo "=== build libjxl ==="
 rm -rf $src-native
